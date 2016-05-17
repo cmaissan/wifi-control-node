@@ -1,5 +1,6 @@
 parsePatterns =
   nmcli_line: new RegExp /([^:]+):\s+(.+)/
+  ssid_filter: new RegExp /(^['"])|(['"]$)/g
 
 connectionStateMap =
   connected: "connected" # Win32 & Linux
@@ -121,7 +122,7 @@ module.exports =
           continue  # this line was not a key: value pair!
         switch KEY
           when "SSID"
-            _network.ssid = String VALUE
+            _network.ssid = (String VALUE).replace parsePatterns.ssid_filter
           when "CHAN"
             _network.channel = String VALUE
           when "SIGNAL"
