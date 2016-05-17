@@ -209,8 +209,8 @@ module.exports =
     #     the Network Manager service
     #
     COMMANDS =
-      disableNetworking: "nmcli networking off"
-      enableNetworking: "nmcli networking on"
+      disableNetworking: "nmcli nm wifi off"
+      enableNetworking: "nmcli nm wifi on"
     resetWiFiChain = [ "disableNetworking", "enableNetworking" ]
 
     #
