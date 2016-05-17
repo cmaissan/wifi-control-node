@@ -146,8 +146,8 @@ module.exports =
     if _ap.password.length
       COMMANDS.connect += " password \"#{_ap.password}\""
     try
-      stdout = @execSync "nmcli connection show \"#{_ap.ssid}\""
-      ssidExist = true if stdout.length
+      stdout = @execSync "nmcli connection list id \"#{_ap.ssid}\""
+      ssidExist = (stdout.search /no such connection/) < 0
     catch error
       ssidExist = false
 
