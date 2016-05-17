@@ -46,7 +46,7 @@ module.exports =
     #
     # (1) Get Interface Power State
     #
-    powerData = @execSync "nmcli networking"
+    powerData = @execSync "nmcli -terse -fields net-enabled nm"
     interfaceState.power = powerStateMap[ powerData.trim() ]
     if interfaceState.power
       #
