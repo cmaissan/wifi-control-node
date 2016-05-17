@@ -50,11 +50,10 @@ module.exports =
     interfaceState.power = powerStateMap[ powerData.trim() ]
     if interfaceState.power
       #
-      # (2) First, we get connection name & state
+      # (2) First, we get the connection state
       #
       foundInterface = false
       connectionData = @execSync "nmcli -m multiline device status"
-      connectionName = null
       for ln, k in connectionData.split '\n'
         try
           parsedLine = parsePatterns.nmcli_line.exec( ln.trim() )
@@ -68,32 +67,32 @@ module.exports =
             foundInterface = true if VALUE is @WiFiControlSettings.iface
           when "STATE"
             interfaceState.connection = connectionStateMap[ VALUE ] if foundInterface
-          when "CONNECTION"
-            connectionName = VALUE if foundInterface
-        break if KEY is "CONNECTION" and foundInterface # we have everything we need!
-      # If we didn't find anything...
+        break if KEY is "STATE" and foundInterface # we have everything we need!
       unless foundInterface
         return {
           success: false
           msg: "Unable to retrieve state of network interface #{@WiFiControlSettings.iface}."
         }
-      if connectionName
-        #
-        # (3) Next, we get the actual SSID
-        #
+      #
+      # (3) Next, we get the active SSID
+      #
+      ssidData = @execSync "nmcli -m multiline device wifi list iface #{@WiFiControlSettings.iface}"
+      ssid = null
+      for ln, k in ssidData.split '\n'
         try
-          ssidData = @execSync "nmcli -m multiline connection show \"#{connectionName}\" | grep 802-11-wireless.ssid"
-          parsedLine = parsePatterns.nmcli_line.exec( ssidData.trim() )
-          interfaceState.ssid = parsedLine[2]
+          parsedLine = parsePatterns.nmcli_line.exec( ln.trim() )
+          KEY = parsedLine[1]
+          VALUE = parsedLine[2]
+          VALUE = null if VALUE is "--"
         catch error
-          return {
-            success: false
-            msg: "Error while retrieving SSID information of network interface #{@WiFiControlSettings.iface}: #{error.stderr}"
-          }
-      else
-        interfaceState.ssid = null
+          continue  # this line was not a key: value pair!
+        switch KEY
+          when "SSID"
+            ssid = VALUE
+        break if KEY is "ACTIVE" and VALUE is "yes" # we have everything we need!
+      interfaceState.ssid = ssid
     else
-      interfaceState.connection = connectionStateMap[ VALUE ]
+      interfaceState.connection = null
       interfaceState.ssid = null
     return interfaceState
 
