@@ -110,7 +110,7 @@ module.exports =
     # the structure found in node-wifiscanner2 for win32 and MacOS.
     #
     networks = []
-    for nwk, c in scanResults.split '(?=\nSSID:)'
+    for nwk, c in scanResults.split /(?=\nSSID:)/g
       _network = {}
       for ln, k in nwk.split '\n'
         try
