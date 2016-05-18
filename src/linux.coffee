@@ -89,7 +89,7 @@ module.exports =
           continue  # this line was not a key: value pair!
         switch KEY
           when "SSID"
-            ssid = VALUE
+            ssid = (String VALUE).replace parsePatterns.ssid_filter, ""
         break if KEY is "ACTIVE" and VALUE is "yes" # we have everything we need!
       interfaceState.ssid = ssid
     else
