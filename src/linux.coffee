@@ -121,7 +121,7 @@ module.exports =
           continue  # this line was not a key: value pair!
         switch KEY
           when "SSID"
-            _network.ssid = (String VALUE).replace parsePatterns.ssid_filter
+            _network.ssid = (String VALUE).replace parsePatterns.ssid_filter, ""
           when "CHAN"
             _network.channel = String VALUE
           when "SIGNAL"
